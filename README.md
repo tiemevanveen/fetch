@@ -167,6 +167,30 @@ fetch('/users')
   })
 ```
 
+Some api's respond to error's with JSON, for example:
+
+```json
+{
+  "message": "User not logged in",
+  "code": 401
+}
+```
+
+In that case, you could use some extra json parsing instead of throwing directly in the else above:
+
+```javascript
+return response.json()
+  .catch(() => {
+    var error = new Error(response.statusText)
+    error.response = response
+    throw error
+  }).then((json) => {
+    var error = new Error(json.message || response.statusText)
+    error.response = response
+    throw error
+  });
+```
+
 #### Sending cookies
 
 To automatically send cookies for the current domain, the `credentials` option
